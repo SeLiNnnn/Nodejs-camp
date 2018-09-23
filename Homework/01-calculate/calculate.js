@@ -10,39 +10,40 @@
 *
 * */
 
-let inpStr = "1+4/3-(-4-5)",//模拟输入
+//计算器开始
+let inpStr = "1+4/2-(-4-5)",//模拟输入
     finalStack = [],//最终生成逆波兰式的栈
     tempStack = [];//临时数组栈
 //inpStr = inpStr.split("");//切割字符串并转为数组
+//let reg = /(\d+)|(\+|\-|\*|\/|\(|\))/g;//匹配所有数字和+-*/%运算符 不匹配空格 无法区分负号和减号
+
+let reg = /(?<=\d)-|-?\d+|\+|\*|\/|\(|\)/g,//支持区分负号和减号,可以匹配正负整数
+    input = inpStr.match(reg);
+
+console.log(input);//匹配后输入的表达式
+
+//定义运算符优先级
+let operator = {
+    "+" : 0,
+    "-" : 0,
+    "*" : 1,
+    "%" : 1,
+    "/" : 1,
+    "(" : 2,
+    ")" : 2
+};
 
 
 //生成逆波兰式
 function toReversePolish(finalPolish) {
-    //let reg = /(\d+)|(\+|\-|\*|\/|\(|\))/g;//匹配所有数字和+-*/%运算符 不匹配空格 无法区分负号和减号
-
-    let reg = /(?<=\d)-|-?\d+|\+|\*|\/|\(|\)/g,//支持区分负号和减号,可以匹配正负整数
-        input = inpStr.match(reg);
-
-    console.log(input);//匹配后输入的表达式
-
-    //定义运算符优先级
-    let operator = {
-      "+" : 0,
-      "-" : 0,
-      "*" : 1,
-      "%" : 1,
-      "/" : 1,
-      "(" : 2,
-      ")" : 2
-    };
 
     for (let i = 0,length = input.length; i < length; i++) {
         if (!isNaN(input[i])) { //判断是否是数字
-            finalStack.push(parseInt(input[i]));//强制转换为浮点数
+            finalStack.push(parseInt(input[i]));//强制转换
         } else {
             if (tempStack.length !== 0) {//判断临时栈是否为空
 
-                if (operator[input[i]] === 2) {//判断该运算符优先级是否为2
+                if (operator[input[i]] === 2) {//判断该运算符是否为括号
 
                     //判断tempStack里是否存在左括号
                     let index = tempStack.indexOf("(");//存在时返回索引到的序号
@@ -142,18 +143,5 @@ function toReversePolish(finalPolish) {
         //console.log(finalRstStack);每一步的结果
     }
     console.log(finalRstStack);//输出最终结果
-
 })();
-
-
-
-
-
-
-
-
-
-
-
-
 
