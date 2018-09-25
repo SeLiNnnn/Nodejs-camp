@@ -62,8 +62,8 @@ function toReversePolish(finalPolish) {
                     }
                 } else {
                     //不是括号，遍历并判断运算符优先级
-                    //当前项优先级低或数组为空
-                    if ((operator[input[i]] <= operator[tempStack[tempStack.length - 1]]) || tempStack.length === 0) {
+                    //当前项优先级低
+                    if ( operator[input[i]] <= operator[tempStack[tempStack.length - 1]] ) {
                         let index = tempStack.indexOf("(");//判断是否存在左括号
                         //console.log(index);
                         if ( index !== -1 ) {//不存在时indexOf返回-1
@@ -80,7 +80,7 @@ function toReversePolish(finalPolish) {
                             }
                         }
                     } else {
-                        //当前运算符优先级大于等于前一个优先级，直接入栈tempStack
+                        //当前运算符优先级大于前一个优先级，直接入栈tempStack
                         tempStack.push(input[i]);
                     }
                 }
@@ -120,7 +120,7 @@ function toReversePolish(finalPolish) {
             //判断运算符类型
             switch (finalPolish[i]) {
                 case '+' :
-                    tempRst = y + x;
+                    tempRst = y + x;//注意加数和被加数的顺序
                     break;
                 case '-' :
                     tempRst = y - x;
