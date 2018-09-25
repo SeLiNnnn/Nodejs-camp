@@ -11,7 +11,7 @@
 * */
 
 //计算器开始
-let inpStr = "1+4/2-(-4-5)",//模拟输入
+let inpStr = "1*4/2-(-4-5)",//模拟输入
     finalStack = [],//最终生成逆波兰式的栈
     tempStack = [];//临时数组栈
 //inpStr = inpStr.split("");//切割字符串并转为数组
@@ -21,6 +21,10 @@ let reg = /(?<=\d)-|-?\d+|\+|\*|\/|\(|\)/g,//支持区分负号和减号,可以�
     input = inpStr.match(reg);
 
 console.log(input);//匹配后输入的表达式
+
+// if (!reg.test(inpStr)) {
+//     console.log("请勿输入非法字符！");
+// }
 
 //定义运算符优先级
 let operator = {
@@ -34,9 +38,9 @@ let operator = {
 };
 
 
+
 //生成逆波兰式
 function toReversePolish(finalPolish) {
-
     for (let i = 0,length = input.length; i < length; i++) {
         if (!isNaN(input[i])) { //判断是否是数字
             finalStack.push(parseInt(input[i]));//强制转换
@@ -144,4 +148,5 @@ function toReversePolish(finalPolish) {
     }
     console.log(finalRstStack);//输出最终结果
 })();
+
 
