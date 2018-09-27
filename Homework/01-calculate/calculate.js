@@ -38,7 +38,6 @@ let operator = {
 };
 
 
-
 //生成逆波兰式
 function toReversePolish(finalPolish) {
     for (let i = 0,length = input.length; i < length; i++) {
