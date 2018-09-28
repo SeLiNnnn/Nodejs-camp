@@ -7,11 +7,15 @@
 *   2。未考虑存在非法字符 --- 不满足正则表达式的符号不会被匹配到。
 *   3。未考虑浮点数 --- 无法匹配浮点数，但运算结果可以显示浮点数。尝试了写入浮点数，但是都存在问题。
 *
+* Bug:
+*   0.1+2*3-(4*5)*2 计算错误 减号被省略 怀疑是右括号之后的运算符没有重新比较优先级
+*   1.括号内存在多个运算符时 优先级的判断似乎有误
+*
 *
 * */
 
 //计算器开始
-let inpStr = "1*4/2-(-4-5)",//模拟输入
+let inpStr = "1+2*3-(4*5)",//模拟输入
     finalStack = [],//最终生成逆波兰式的栈
     tempStack = [];//临时数组栈
 //inpStr = inpStr.split("");//切割字符串并转为数组
@@ -52,6 +56,8 @@ function toReversePolish(finalPolish) {
                     let index = tempStack.indexOf("(");//存在时返回索引到的序号
                     if ( index !== -1 ) {//不存在时indexOf返回-1
                         //存在括号 括号里运算符依次出栈并入finalStack
+                        tempStack.push(input[i]);//当前右括号入栈，然后再删除
+                        tempStack.pop();//删除栈顶右括号
                         for (let x = tempStack.length - 1; x >= index; x --) {
                             if (x === index) {
                                 tempStack.pop();//遍历到括号时 直接删除
