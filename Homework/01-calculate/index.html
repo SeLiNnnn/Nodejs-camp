@@ -2,11 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="SeLiNnnn">
-    <meta name="generator" content="WebStorm">
-    <title>My calculate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的计算器</title>
     <style>
         body {
             font-family: "Microsoft Yahei";
@@ -31,123 +29,304 @@
         a {
             text-decoration: none;
         }
-        table{
-            margin: 20px auto;
-            width: 400px;
-            height: 500px;
+        #bgbox {
+            position: relative;
+            width: 410px;
+            height: 710px;
+            background-color: #000; 
+            box-shadow: 5px 5px 5px grey;
+            margin: 150px auto;
         }
-        table tr td {
-            font-size: 14px;
+        .disp {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            /* background-color: pink;  */
+            
+        }
+        .disp div {
+            width: 100%;
+            height: 50px;
+            color: #fff;
+            line-height: 50px;
+            text-align: right;
+        }
+        .disp .dispInp {
+            position: absolute;
+            top: 70px;
+            left: -33px;
+            font-size: 26px;  
+        }
+        .disp .dispRst {
+            position: absolute;
+            top: 130px;
+            left: -33px;
+            font-size: 80px;
+        }
+        .oper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 410px;
+            height: 510px;
+            /* background-color: goldenrod; */
+            cursor: pointer;
+            user-select: none;
+        }
+        .oper div {
+            float: left;
+            width: 90px;
+            height:90px;
+            background-color: #333433;
+            border-radius: 50%;
+            margin: 10px 0 0 10px;
+            color: #fff;
+            font-size: 36px;
             text-align: center;
+            line-height: 90px;
+        }
+        .oper .oper-grey {
+            background-color: #a5a5a5;
+            color: #000;
+        }
+        .oper .oper-org {
+            background-color: #ff9100;
+        }
+        .oper .oper-zero {
+            padding-left: 35px;
+            width: 155px;
+            border-radius: 50px;
+            text-align: left;
         }
     </style>
 </head>
-    <body>
+<body>
+    <!-- 布局开始 -->
+    <div id="bgbox">
+        <!-- 运算显示部分 -->
+        <div class="disp">
+            <!-- 显示表达式 -->
+            <div class="dispInp" id="polish"></div>
+            <!-- 显示运算结果 -->
+            <div class="dispRst" id="rst">0</div>
+        </div>
+        <!-- 数字与操作符部分 -->
+        <div class="oper">
+            <!-- AC () -->
+            <div class="oper-grey" id="reset">AC</div>
+            <div class="oper-grey opers">(</div>
+            <div class="oper-grey opers">)</div>
+            <!-- 数字和运算符 -->
+            <div class="oper-org opers">/</div>
+            <div class="oper-num opers">7</div>
+            <div class="oper-num opers">8</div>
+            <div class="oper-num opers">9</div>
+            <div class="oper-org opers">*</div>
+            <div class="oper-num opers">4</div>
+            <div class="oper-num opers">5</div>
+            <div class="oper-num opers">6</div>
+            <div class="oper-org opers">-</div>
+            <div class="oper-num opers">1</div>
+            <div class="oper-num opers">2</div>
+            <div class="oper-num opers">3</div>
+            <div class="oper-org opers">+</div>
+            <div class="oper-num oper-zero opers">0</div>
+            <div class="oper-num opers">.</div>
+            <div class="oper-org" id="equal">=</div>
+        </div>
+    </div>
 
 
-        <table border="1">
+    <script>
+        var res = document.getElementById("rst"),
+            exp = document.getElementById("polish"),
+            reset = document.getElementById("reset"),
+            opers = document.querySelectorAll(".opers"),
+            equal = document.getElementById("equal");
 
-            <!-- row col都是从前往后 从上往下合并 -->
-
-            <!--<tr>-->
-                <!--<td>1</td>-->
-                <!--<td>2</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td colspan="2">3</td>-->
-            <!--</tr>-->
-
-
-            <!-- RGB 三基色 人眼对这三种颜色最敏感 -->
-            <!-- 如何看到颜色的？ 反射光
-                非发光器的颜色？ 吸收一部分光 反射一部分光 混合各种光
-                发光器的颜色？投射到眼睛中 直接混合而成
-                反色：胶卷的曝光：
-             -->
-
-
-            <tr>
-               <td colspan="4">
-                   <!-- input标签没有它的子节点 所以它是单标签  -->
-                   <input type="text">
-               </td>
-            </tr>
-            <tr>
-                <td colspan="4"></td>
-            </tr>
-            <tr>
-                <td>C</td>
-                <td>(</td>
-                <td>)</td>
-                <td>/</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>*</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>+</td>
-            </tr>
-            <tr>
-                <td colspan="2">0</td>
-                <td>.</td>
-                <td>=</td>
-            </tr>
-
-
-
-
-            <!--<tr>-->
-                <!--<td colspan="4"></td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td colspan="4"></td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>C</td>-->
-                <!--<td>(</td>-->
-                <!--<td>)</td>-->
-                <!--<td>/</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>7</td>-->
-                <!--<td>8</td>-->
-                <!--<td>9</td>-->
-                <!--<td>*</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>4</td>-->
-                <!--<td>5</td>-->
-                <!--<td>6</td>-->
-                <!--<td>-</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>1</td>-->
-                <!--<td>2</td>-->
-                <!--<td>3</td>-->
-                <!--<td rowspan="2">=</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>0</td>-->
-                <!--<td>.</td>-->
-                <!--<td>/</td>-->
-
-            <!--</tr>-->
+        // 重置
+        reset.onclick = function () {
+            res.innerHTML = "0";
+            exp.innerHTML = "";
+        }
+        for (var i = 0, lenght = opers.length; i < lenght; i++) {
             
+            var index = 0;
+            opers[i].index = i;
             
-        </table>
-    
+            // var index = this.index;
+            // var val = opers[index].innerHTML;
+            
+            opers[i].onclick = function () {
+                var val = this.innerHTML;
+                exp.innerHTML += val;
+            }
+            
+        }
+        
+        equal.onclick = function () {
+            // 生成逆波兰式
+            var calcArr = [];
+            var jud = true;
+            var sArr = [];
+            exp = exp.innerHTML;
+            if (!exp) {return};    
+            function trans(arr) {
+                if (arr.length > 0) {
+                    var tmp = arr.shift();
+                }
+                else {
+                    return 0;
+                }
+                if (tmp*1 == tmp || tmp == '.') {
+                    if (calcArr.length > 0) {
+                        if (jud) {
+                            calcArr[calcArr.length - 1] += '';
+                            calcArr[calcArr.length - 1] += tmp;
+                        }
+                        else {
+                            calcArr.push(tmp);
+                        }
+                    }
+                    else {
+                        calcArr.push(tmp);
+                    }
+                    jud = true;
+                    trans(arr);
+                }
+                else {
+                    jud = false;
+                    var arrTmp = push_sArr(tmp);
+                    if (arrTmp) {
+                        calcArr = calcArr.concat(arrTmp);
+                        trans(arr);
+                    }
+                    else {
+                        return 0;
+                    }
+                }
+            }
+            function push_sArr(n, tmpArr) {
+                if (tmpArr == undefined) {
+                    tmpArr = [];
+                }
+                if (sArr.length == 0) {
+                    sArr.push(n);
+                    return tmpArr;
+                }
+                else {
+                    var end = transSymbol(sArr[sArr.length-1]);
+                    var now = transSymbol(n);
+                    if (end == 3 && now != 4){
+                        sArr.push(n);
+                        return tmpArr;
+                    }
+                    if (now > end) {
+                        if (now == 4) {
+                            if (end != 3) {
+                                tmpArr.push(sArr.pop());
+                                return push_sArr(n, tmpArr);
+                            }
+                            else if (end == 3){
+                                sArr.pop();
+                                return tmpArr;
+                            }
+                            else
+                                return false;
+                        }
+                        else if (now){
+                            sArr.push(n);
+                            return tmpArr;
+                        }
+                        else
+                            return false;
+                    }
+                    else if (now) {
+                        tmpArr.push(sArr.pop());
+                        return push_sArr(n, tmpArr);
+                    }
+                    else
+                        return false;
+                }
+            }
+            function transSymbol(x) {
+                switch (x)
+                {
+                    case '+':
+                    case '-':
+                        return 1;
+                        break;
+                    case '*':
+                    case '/':
+                        return 2;
+                        break;
+                    case '(':
+                        return 3;
+                        break;
+                    case ')':
+                        return 4;
+                        break;
+                    default:
+                        return false;
+                }
+            }
+            // 计算
+            function calc(arr) {
+                var tmp = arr.shift();
+                var r = '';
+                var l = '';
+                if (arr.length == 0) {
+                    return tmp;
+                }
+                else {
+                    switch (tmp)
+                    {
+                        case '+':
+                            r = arr.pop();
+                            l = arr.pop();
+                            arr.push((l*1.0)+(r*1.0));
+                            break;
+                        case '-':
+                            r = arr.pop();
+                            l = arr.pop();
+                            arr.push((l*1.0)-(r*1.0));
+                            break;
+                        case '*':
+                            r = arr.pop();
+                            l = arr.pop();
+                            arr.push((l*1.0)*(r*1.0));
+                            break;
+                        case '/':
+                            r = arr.pop();
+                            l = arr.pop();
+                            arr.push((l*1.0)/(r*1.0));
+                            break;
+                        default:
+                            arr.push(tmp);
+                    }
+                    return calc(arr);
+                }
+            }
+            function equal(expression) {
+                expression = '('+expression+')';
+                trans(expression.split(''));
+                calcStr = calcArr.join();
+                return {res: calc(calcArr), exp: calcStr};
+            }
+            console.log(equal(exp));
+            // console.log(equal(exp).res);
+            res.innerHTML = equal(exp).res;
 
-    </body>
+        }
+
+        
+        
+
+        
+
+        
+
+    </script>
+    <!-- <script src="cal.js"></script> -->
+</body>
 </html>
