@@ -28,7 +28,7 @@
     var snake_color = 'rgb(187, 216, 233)';// 蛇身颜色
     var snake_border_color = '#666';// 边框
     var snake_eye_color = '#000';// 眼睛
-    var worm_color = 'rgb(255, 145, 0)';// 虫子
+    var food_color = 'rgb(255, 145, 0)';// 食物
 
     // 蛇的初始位置
     var snake_locat = [{ 'x': 20, 'y': 20 }, { 'x': 40, 'y': 20 }, { 'x': 60, 'y': 20 }];// 默认刚开始蛇身占据三个格子
@@ -36,8 +36,8 @@
     var snake_head = { 'x': 20, 'y': 20 };
     // 蛇的长度
     var snake_body_len = 20;
-    // 虫子的位置
-    var worm = { 'x': 200, 'y': 200 };
+    // 食物的位置
+    var food = { 'x': 200, 'y': 200 };
     // 得分
     var score = 0;
     // 方向
@@ -52,6 +52,10 @@
     var timer;
     // 键盘锁 
     var flag = true;
+    // 设置游戏速度级别
+    var speed = ["手残", "入门", "一般般", "城会玩儿", "骚操作", "大佬大佬", "牛逼牛逼牛逼"];
+    // 当前游戏级别
+    var level;
 
     // 9-清除画布
     function erase() {
@@ -80,28 +84,28 @@
       ctx.closePath();
       ctx.restore();
     }
-    // 3-随机生成虫子
-    function createWorm() {
+    // 3-随机生成食物
+    function createFood() {
 
       var x = Math.floor(Math.random() * 20);
       var y = Math.floor(Math.random() * 20);
 
-      //虫子的位置不能和蛇重合
+      //食物的位置不能和蛇重合
       for (var i = 0; i < snake_locat.length; i++) {
         if (x != snake_locat[i].x && y != snake_locat[i].y) {// 头的位置和身体每一个格子都比较
-          worm = { 'x': x * 20, 'y': y * 20 };// 得出虫子坐标 *20像素
+          food = { 'x': x * 20, 'y': y * 20 };// 得出食物坐标 *20像素
         } else {
-          createWorm()
+          createFood()
         }
       }
     }
 
 
-    // 2-画虫子
-    function drawWorm() {
+    // 2-画食物
+    function drawFood() {
       ctx.save();
-      ctx.fillStyle = worm_color;// 填充颜色
-      ctx.fillRect(worm.x, worm.y, snake_body_len, snake_body_len);// 宽高和蛇的身体是一样的
+      ctx.fillStyle = food_color;// 填充颜色
+      ctx.fillRect(food.x, food.y, snake_body_len, snake_body_len);// 宽高和蛇的身体是一样的
       ctx.restore();
     }
 
@@ -109,9 +113,17 @@
     function drawScore() {
       ctx.save();
       ctx.font = '20px Verdana';// 文字大小和类型
-      ctx.fillStyle = 'skyblue';// 文字颜色
+      ctx.fillStyle = '#9b90c2';// 文字颜色
       ctx.fillText('得分:' + score, 300, 50);// 绘制文本
       ctx.restore();
+    }
+
+    // 9-当前速度级别（游戏难度）
+    function drawSpeed() {
+      ctx.save();
+      ctx.font = '20px Verdana';
+      ctx.fillStyle = '#9b90c2';
+      ctx.fillText('速度级别:' + level, 20, 50)
     }
 
     // 5-游戏结束提示
@@ -139,9 +151,9 @@
           snake_head = { "x": snake_head.x, "y": snake_head.y + snake_body_len };
           break;
       }
-      // 碰撞检测-是否吃到虫子
-      if (snake_head.x == worm.x && snake_head.y == worm.y) {
-        createWorm();// 产生新虫子
+      // 碰撞检测-是否吃到食物
+      if (snake_head.x == food.x && snake_head.y == food.y) {
+        createFood();// 产生新食物
         snake_locat.push(snake_last);// 吃到了就在最后增加一格
         score++;
       }
@@ -191,23 +203,49 @@
     // 8-动画 不停调用绘制等各种方法
     function animate() {
       index++;//每调用一次自身就++
-      if (index % 10 == 0) {
-        step();
-      }
-      erase();
-      drawSnake();// 1-画蛇
-      // createWorm();//3- 先执行随机生成虫子
-      drawWorm();// 2-画虫子
-      drawScore();// 4-得分
-      // drawOver();// 5-游戏结束
-      if (isOver) {// 为真 超出边界
-        cancelAnimationFrame(timer);//清除动画
-        drawOver();// 5-游戏结束
-      } else {
-        timer = requestAnimationFrame(animate);// 调用自己
-      }
 
-    };    
+      //根据分数进行速度控制
+      if (score < 5 && index % 10 == 0) {
+        level = speed[0];
+        step();
+      } else if (score < 10 && score >= 5 && index % 8 == 0) {
+        level = speed[1];
+        step();
+      } else if (score < 20 && score >= 10 && index % 6 == 0) {
+        level = speed[2];
+        step();
+      } else if (score < 30 && score >= 20 && index % 5 == 0) {
+        level = speed[3];
+        step();
+      } else if (score < 40 && score >= 30 && index % 4 == 0) {
+        level = speed[4];
+        step();
+      } else if (score < 50 && score >= 40 && index % 3 == 0) {
+        level = speed[5];
+        step();
+      } else if (score >= 50 && index % 2 == 0) {
+        level = speed[6];
+        step();
+      } else {
+
+      }
+    
+
+    erase();
+    drawSnake();// 1-画蛇
+    // createFood();//3- 先执行随机生成食物
+    drawFood();// 2-画食物
+    drawScore();// 4-得分
+    drawSpeed();// 9-游戏级别
+    // drawOver();// 5-游戏结束
+    if (isOver) {// 为真 超出边界
+      cancelAnimationFrame(timer);//清除动画
+      drawOver();// 5-游戏结束
+    } else {
+      timer = requestAnimationFrame(animate);// 调用自己
+    }
+
+    };
     animate();
   </script>
 </body>
