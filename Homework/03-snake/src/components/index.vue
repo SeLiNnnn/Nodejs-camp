@@ -103,7 +103,7 @@ export default {
           // 头的位置和身体每一个格子都比较
           this.food = { x: x * 20, y: y * 20 }; // 得出食物坐标 *20像素
         } else {
-          this.createfood();
+          this.createFood();
         }
       }
     },
