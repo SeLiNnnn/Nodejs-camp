@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>贪吃蛇</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    canvas {
+      border: 10px solid skyblue;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas width="400" height="400"></canvas>
+
+  <script>
+    var oC = document.querySelector('canvas');
+    var ctx = oC.getContext('2d');
+
+    var snake_color = 'rgb(187, 216, 233)';// 蛇身颜色
+    var snake_border_color = '#666';// 边框
+    var snake_eye_color = '#000';// 眼睛
+    var worm_color = 'rgb(255, 145, 0)';// 虫子
+
+    // 蛇的初始位置
+    var snake_locat = [{ 'x': 20, 'y': 20 }, { 'x': 40, 'y': 20 }, { 'x': 60, 'y': 20 }];// 默认刚开始蛇身占据三个格子
+    // 蛇头的位置
+    var snake_head = { 'x': 20, 'y': 20 };
+    // 蛇的长度
+    var snake_body_len = 20;
+    // 虫子的位置
+    var worm = { 'x': 200, 'y': 200 };
+    // 得分
+    var score = 0;
+    // 方向
+    var snake_direction = 'b';// 默认初始的时候向下走
+    // 限制频率
+    var index = 0;
+    // 蛇身的最后一格
+    var snake_last;
+    // 游戏是否结束
+    var isOver = false;
+    // 设置动画控制
+    var timer;
+    // 键盘锁 
+    var flag = true;
+
+    // 9-清除画布
+    function erase() {
+      ctx.clearRect(0, 0, oC.width, oC.height);// 清除上一次的画布 从0，0开始 一直到整个画布
+    }
+
+
+    // 1-画蛇
+    function drawSnake() {
+      ctx.save();
+      // 填充颜色
+      ctx.strokeStyle = snake_border_color;
+      ctx.fillStyle = snake_color;
+      // 绘制三个格子的颜色
+      for (var i = 0; i < snake_locat.length; i++) {
+        ctx.fillRect(snake_locat[i].x, snake_locat[i].y, snake_body_len, snake_body_len);// 填充每一个的宽度和高度?
+        ctx.strokeRect(snake_locat[i].x, snake_locat[i].y, snake_body_len, snake_body_len);// 边框
+
+      }
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle = snake_eye_color;// 眼睛：一个圆
+      ctx.beginPath();// 绘制路径
+      ctx.arc(snake_head.x + 10, snake_head.y + 10, 5, 0, 2 * Math.PI, false);// 眼睛横纵坐标都加10 半径为5 圆从0度到360度定义的弧度 false顺时针
+      ctx.fill();// 填充
+      ctx.closePath();
+      ctx.restore();
+    }
+    // 3-随机生成虫子
+    function createWorm() {
+
+      var x = Math.floor(Math.random() * 20);
+      var y = Math.floor(Math.random() * 20);
+
+      //虫子的位置不能和蛇重合
+      for (var i = 0; i < snake_locat.length; i++) {
+        if (x != snake_locat[i].x && y != snake_locat[i].y) {// 头的位置和身体每一个格子都比较
+          worm = { 'x': x * 20, 'y': y * 20 };// 得出虫子坐标 *20像素
+        } else {
+          createWorm()
+        }
+      }
+    }
+
+
+    // 2-画虫子
+    function drawWorm() {
+      ctx.save();
+      ctx.fillStyle = worm_color;// 填充颜色
+      ctx.fillRect(worm.x, worm.y, snake_body_len, snake_body_len);// 宽高和蛇的身体是一样的
+      ctx.restore();
+    }
+
+    // 4-得分
+    function drawScore() {
+      ctx.save();
+      ctx.font = '20px Verdana';// 文字大小和类型
+      ctx.fillStyle = 'skyblue';// 文字颜色
+      ctx.fillText('得分:' + score, 300, 50);// 绘制文本
+      ctx.restore();
+    }
+
+    // 5-游戏结束提示
+    function drawOver() {
+      ctx.save();
+      ctx.font = '36px Verdana';
+      ctx.fillStyle = 'red';
+      ctx.fillText('游戏结束', 130, 200);// 尽量在中间位置
+      ctx.restore();
+    }
+
+    // 7-移动
+    function step() {
+      switch (snake_direction) {
+        case 'l':
+          snake_head = { "x": snake_head.x - snake_body_len, "y": snake_head.y };
+          break;
+        case 't':
+          snake_head = { "x": snake_head.x, "y": snake_head.y - snake_body_len };
+          break;
+        case 'r':
+          snake_head = { "x": snake_head.x + snake_body_len, "y": snake_head.y };
+          break;
+        case 'b':// 向下：x不变 y不断增加
+          snake_head = { "x": snake_head.x, "y": snake_head.y + snake_body_len };
+          break;
+      }
+      // 碰撞检测-是否吃到虫子
+      if (snake_head.x == worm.x && snake_head.y == worm.y) {
+        createWorm();// 产生新虫子
+        snake_locat.push(snake_last);// 吃到了就在最后增加一格
+        score++;
+      }
+      snake_last = snake_locat.pop();// 删除最后一格
+      snake_locat.unshift(snake_head);// 在前面进行添加
+
+      // 蛇碰到自身 结束
+      for (var i = 1; i < snake_locat.length; i++) {// i=0的时候就是初始位置 会直接结束游戏 所以要从1开始
+        if (snake_head.x == snake_locat[i].x && snake_head.y == snake_locat[i].y) {// 头的位置和身体每一个格子都比较
+          isOver = true;
+          break; // 碰到就跳出！！！
+        }
+      }
+
+      // 蛇碰到边界 游戏结束 -- 超出画布的宽高范围
+      if (snake_head.x >= 400 || snake_head.x < 0 || snake_head.y >= 400 || snake_head.y < 0) {
+        isOver = true;
+      }
+      flag = true;
+    }
+
+    // 6-监听键盘事件
+    document.onkeydown = function (ev) {
+      if (flag) {
+        switch (ev.keyCode) {
+          //检测：不能朝相反的方向移动
+          case 37: //左 
+            if (snake_direction != 'r') snake_direction = 'l';// 已经在向左移动的时候不能向右
+            flag = false
+            break;
+          case 38: //上
+            if (snake_direction != 'b') snake_direction = 't';// 向上
+            flag = false
+            break;
+          case 39: //右
+            if (snake_direction != 'l') snake_direction = 'r';
+            flag = false
+            break;
+          case 40: //下
+            if (snake_direction != 't') snake_direction = 'b';
+            flag = false
+            break;
+        }
+      }
+    }
+
+    // 8-动画 不停调用绘制等各种方法
+    function animate() {
+      index++;//每调用一次自身就++
+      if (index % 10 == 0) {
+        step();
+      }
+      erase();
+      drawSnake();// 1-画蛇
+      // createWorm();//3- 先执行随机生成虫子
+      drawWorm();// 2-画虫子
+      drawScore();// 4-得分
+      // drawOver();// 5-游戏结束
+      if (isOver) {// 为真 超出边界
+        cancelAnimationFrame(timer);//清除动画
+        drawOver();// 5-游戏结束
+      } else {
+        timer = requestAnimationFrame(animate);// 调用自己
+      }
+
+    };    
+    animate();
+  </script>
+</body>
+
+</html>
