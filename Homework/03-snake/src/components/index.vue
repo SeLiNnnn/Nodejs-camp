@@ -94,19 +94,35 @@ export default {
     },
     // 3-随机生成食物
     createFood() {
-      var x = Math.floor(Math.random() * 20);
-      var y = Math.floor(Math.random() * 20);
-
-      //食物的位置不能和蛇重合
+      var x = Math.floor(Math.random() * 20),
+        y = Math.floor(Math.random() * 20),
+        coverFlag = false
       for (var i = 0; i < this.snake_locat.length; i++) {
-        if (x != this.snake_locat[i].x && y != this.snake_locat[i].y) {
-          // 头的位置和身体每一个格子都比较
-          this.food = { x: x * 20, y: y * 20 }; // 得出食物坐标 *20像素
-        } else {
-          this.createFood();
+        if (x * 20 == this.snake_locat[i].x && y * 20 == this.snake_locat[i].y) {// 头的位置和身体每一个格子都比较
+          coverFlag = true;// 重合了
         }
       }
+      if (!coverFlag) {//没重合
+        this.food = { 'x': x * 20, 'y': y * 20 };// 得出食物坐标 
+        //console.log('未重合的食物坐标'+food.x,food.y)
+      } else {
+        this.createFood();
+      }
     },
+    // createFood() {
+    //   var x = Math.floor(Math.random() * 20);
+    //   var y = Math.floor(Math.random() * 20);
+
+    //   //食物的位置不能和蛇重合
+    //   for (var i = 0; i < this.snake_locat.length; i++) {
+    //     if (x != this.snake_locat[i].x && y != this.snake_locat[i].y) {
+    //       // 头的位置和身体每一个格子都比较
+    //       this.food = { x: x * 20, y: y * 20 }; // 得出食物坐标 *20像素
+    //     } else {
+    //       this.createFood();
+    //     }
+    //   }
+    // },
 
     // 2-画食物
     drawFood() {
@@ -240,9 +256,10 @@ export default {
       }
 
       this.erase();
+      this.drawFood(); // 2-画食物
       this.drawSnake(); // 1-画蛇
       // createFood();//3- 先执行随机生成食物
-      this.drawFood(); // 2-画食物
+      
       this.drawScore(); // 4-得分
       this.drawSpeed();// 9-游戏级别
       // drawOver();// 5-游戏结束

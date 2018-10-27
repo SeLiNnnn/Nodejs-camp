@@ -11,7 +11,6 @@
       margin: 0;
       padding: 0;
     }
-
     canvas {
       border: 10px solid skyblue;
     }
@@ -20,15 +19,19 @@
 
 <body>
   <canvas width="400" height="400"></canvas>
+  
 
   <script>
     var oC = document.querySelector('canvas');
     var ctx = oC.getContext('2d');
 
+    
+    // 默认色
     var snake_color = 'rgb(187, 216, 233)';// 蛇身颜色
     var snake_border_color = '#666';// 边框
     var snake_eye_color = '#000';// 眼睛
     var food_color = 'rgb(255, 145, 0)';// 食物
+
 
     // 蛇的初始位置
     var snake_locat = [{ 'x': 20, 'y': 20 }, { 'x': 40, 'y': 20 }, { 'x': 60, 'y': 20 }];// 默认刚开始蛇身占据三个格子
@@ -44,7 +47,7 @@
     var snake_direction = 'b';// 默认初始的时候向下走
     // 限制频率
     var index = 0;
-    // 蛇身的最后一格
+    // 蛇尾
     var snake_last;
     // 游戏是否结束
     var isOver = false;
@@ -56,6 +59,10 @@
     var speed = ["手残", "入门", "一般般", "城会玩儿", "骚操作", "大佬大佬", "牛逼牛逼牛逼"];
     // 当前游戏级别
     var level;
+
+    
+    
+
 
     // 9-清除画布
     function erase() {
@@ -84,21 +91,41 @@
       ctx.closePath();
       ctx.restore();
     }
+
     // 3-随机生成食物
     function createFood() {
+      // isCovered();
+      var x = Math.floor(Math.random() * 20),
+        y = Math.floor(Math.random() * 20),
+        coverFlag = false;
 
-      var x = Math.floor(Math.random() * 20);
-      var y = Math.floor(Math.random() * 20);
+      //console.log('随机数:'+x,y);
 
-      //食物的位置不能和蛇重合
       for (var i = 0; i < snake_locat.length; i++) {
-        if (x != snake_locat[i].x && y != snake_locat[i].y) {// 头的位置和身体每一个格子都比较
-          food = { 'x': x * 20, 'y': y * 20 };// 得出食物坐标 *20像素
-        } else {
-          createFood()
+
+        if (x * 20 == snake_locat[i].x && y * 20 == snake_locat[i].y) {// 头的位置和身体每一个格子都比较
+          // console.log(i);
+          // console.log('【重合啦！！！！！！】');
+          // console.log('【标记】重合的蛇坐标'+snake_locat[i].x,snake_locat[i].y);
+          // console.log('【标记】重合的食物坐标'+food.x,food.y)
+          coverFlag = true;// 重合了
+          //console.log(coverFlag);
         }
+        //console.log(i)
+        //console.log('蛇的所有坐标'+snake_locat[i].x,snake_locat[i].y+'当前长度'+(i+1))
+      }
+
+      if (!coverFlag) {//没重合
+        food = { 'x': x * 20, 'y': y * 20 };// 得出食物坐标 
+        //console.log('未重合的食物坐标'+food.x,food.y)
+      } else {
+        createFood();
       }
     }
+
+
+
+
 
 
     // 2-画食物
@@ -153,9 +180,10 @@
       }
       // 碰撞检测-是否吃到食物
       if (snake_head.x == food.x && snake_head.y == food.y) {
-        createFood();// 产生新食物
+        // createFood();// 产生新食物
         snake_locat.push(snake_last);// 吃到了就在最后增加一格
         score++;
+        createFood();//先增加蛇的长度再 产生新食物
       }
       snake_last = snake_locat.pop();// 删除最后一格
       snake_locat.unshift(snake_head);// 在前面进行添加
@@ -229,21 +257,21 @@
       } else {
 
       }
-    
 
-    erase();
-    drawSnake();// 1-画蛇
-    // createFood();//3- 先执行随机生成食物
-    drawFood();// 2-画食物
-    drawScore();// 4-得分
-    drawSpeed();// 9-游戏级别
-    // drawOver();// 5-游戏结束
-    if (isOver) {// 为真 超出边界
-      cancelAnimationFrame(timer);//清除动画
-      drawOver();// 5-游戏结束
-    } else {
-      timer = requestAnimationFrame(animate);// 调用自己
-    }
+      erase();
+      // createFood();//3- 先执行随机生成食物
+
+      drawFood();// 2-画食物 
+      drawSnake();// 1-画蛇 
+      drawScore();// 4-得分
+      drawSpeed();// 9-游戏级别
+      // drawOver();// 5-游戏结束
+      if (isOver) {// 为真 超出边界
+        cancelAnimationFrame(timer);//清除动画
+        drawOver();// 5-游戏结束
+      } else {
+        timer = requestAnimationFrame(animate);// 调用自己
+      }
 
     };
     animate();

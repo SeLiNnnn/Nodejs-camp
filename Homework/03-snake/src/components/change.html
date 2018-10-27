@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>换肤</title>
+  <style>
+    
+    div {
+      width: 100px;
+      height: 100px;
+    }
+  
+  </style>
+</head>
+<body>
+
+  身体颜色<input type="text">
+  <button>确定</button>
+  边框颜色<input type="text">
+  <button>确定</button>
+  眼睛颜色<input type="text">
+  <button>确定</button>
+  食物颜色<input type="text">
+  <button>确定</button>
+
+  <div class="body"></div>
+  <div class="border"></div>
+  <div class="eye"></div>
+  <div class="food"></div>
+  
+
+  <script>
+    var aInp = document.querySelectorAll('input');
+    var oBtn = document.querySelectorAll('button');
+    var oDiv = document.querySelectorAll('div');
+
+    // 默认色
+    var body_color = 'red';
+    var border_color ='yellow';
+    var eye_color = 'blue';
+    var food_color = 'green';
+
+    oDiv[0].style.backgroundColor = body_color;
+    oDiv[1].style.backgroundColor = border_color
+    oDiv[2].style.backgroundColor = eye_color
+    oDiv[3].style.backgroundColor = food_color
+    
+    // 身体
+    oBtn[0].onclick = function () {
+      if (aInp[0].value) {
+        body_color = aInp[0].value
+        oDiv[0].style.backgroundColor = body_color;
+      }
+    }
+
+    oBtn[1].onclick = function () {
+      if (aInp[1].value) {
+        border_color = aInp[1].value
+        oDiv[1].style.backgroundColor = border_color;
+      }
+    }
+
+    oBtn[2].onclick = function () {
+      if (aInp[2].value) {
+        eye_color = aInp[2].value
+        oDiv[2].style.backgroundColor = eye_color;
+      }
+    }
+
+    oBtn[3].onclick = function () {
+      if (aInp[3].value) {
+        food_color = aInp[3].value
+        oDiv[3].style.backgroundColor = food_color;
+      }
+    }
+    
+    
+
+    
+    
+    
+     
+  
+  </script>
+</body>
+</html>
